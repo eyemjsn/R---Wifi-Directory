@@ -1,0 +1,221 @@
+library(readr)
+library(caret)
+library(lattice)
+library(ggplot2)
+library(doParallel)
+library(dplyr)
+library(tidyverse)
+library(tidyr)
+set.seed(123)
+trainingData <- read.csv("trainingData.csv")
+Originaltrainingdata <- trainingData
+{
+#User 1-6  
+User123456 <- filter(trainingData, USERID == 1|USERID == 2|USERID == 3|USERID == 4|USERID == 5|USERID == 6)
+names(User123456)
+User123456$BuildingandFloor <- paste(User123456$BUILDINGID,"-", User123456$FLOOR)
+names(User123456)
+User123456$BUILDINGID <- NULL
+User123456$FLOOR <- NULL
+User123456$TIMESTAMP <- NULL
+User123456$RELATIVEPOSITION <- NULL
+User123456$LONGITUDE <- NULL
+User123456$LATITUDE <- NULL
+User123456$PHONEID <- NULL
+names(User123456)  
+library(rpart)
+inTraining1_6rp <- createDataPartition(User123456$USERID,p=.70, list = FALSE)
+training1_6rp <- User123456[inTraining1_6rp,]
+testing1_6rp <-  User123456[-inTraining1_6rp,]  
+rPartControl_123456 <- trainControl(method = "repeatedcv", number = 10, repeats = 1)
+rPartFituser123456 <- train(BuildingandFloor~., data = training1_6rp, method = "rpart",trControl=rPartControl_123456, tuneLength = 15)
+rPartpreds_123456 <- predict(rPartFituser123456,testing1_6rp)
+postResample(rPartpreds_123456,as.factor(testing1_6rp$BuildingandFloor))
+confusionMatrix(rPartpreds_123456,as.factor(testing1_6rp$BuildingandFloor))
+}
+
+{
+  User7_12 <- filter(trainingData, USERID == 7|USERID == 8|USERID == 9|USERID == 10|USERID == 11|USERID == 12)
+  names(User7_12)
+  User7_12$BuildingandFloor <- paste(User7_12$BUILDINGID,"-", User7_12$FLOOR)
+  names(User7_12)
+  User7_12$BUILDINGID <- NULL
+  User7_12$FLOOR <- NULL
+  User7_12$TIMESTAMP <- NULL
+  User7_12$RELATIVEPOSITION <- NULL
+  User7_12$LONGITUDE <- NULL
+  User7_12$LATITUDE <- NULL
+  User7_12$PHONEID <- NULL
+  names(User7_12)  
+  library(rpart)
+  inTraining7_12rp <- createDataPartition(User7_12$USERID,p=.70, list = FALSE)
+  training1_7_12rp <- User7_12[inTraining7_12rp,]
+  testing1_7_12rp <-  User7_12[-inTraining7_12rp,]  
+  rPartControl_712 <- trainControl(method = "repeatedcv", number = 10, repeats = 1)
+  rPartFituser_12 <- train(BuildingandFloor~., data = training1_7_12rp, method = "rpart",trControl=rPartControl_712, tuneLength = 15)
+  rPartpreds_712 <- predict(rPartFituser_12,testing1_7_12rp)
+  postResample(rPartpreds_712,as.factor(testing1_7_12rp$BuildingandFloor))
+  confusionMatrix(rPartpreds_712,as.factor(testing1_7_12rp$BuildingandFloor))
+}
+
+{
+#users 13-18
+  User13_18 <- filter(trainingData, USERID == 13|USERID == 14|USERID == 15|USERID == 16|USERID == 17|USERID == 18)
+  names(User13_18)
+  User13_18$BuildingandFloor <- paste(User13_18$BUILDINGID,"-", User13_18$FLOOR)
+  names(User13_18)
+  User13_18$BUILDINGID <- NULL
+  User13_18$FLOOR <- NULL
+  User13_18$TIMESTAMP <- NULL
+  User13_18$RELATIVEPOSITION <- NULL
+  User13_18$LONGITUDE <- NULL
+  User13_18$LATITUDE <- NULL
+  User13_18$PHONEID <- NULL
+  names(User13_18)  
+  library(rpart)
+  inTraining13_18rp <- createDataPartition(User13_18$USERID,p=.70, list = FALSE)
+  training13_18rp <- User13_18[inTraining13_18rp,]
+  testing13_18rp <-  User13_18[-inTraining13_18rp,]  
+  rPartControl_1318 <- trainControl(method = "repeatedcv", number = 10, repeats = 1)
+  rPartFituser_1318 <- train(BuildingandFloor~., data = training13_18rp, method = "rpart",trControl=rPartControl_1318, tuneLength = 15)
+  rPartpreds_1318 <- predict(rPartFituser_1318,testing13_18rp)
+  postResample(rPartpreds_1318,as.factor(testing13_18rp$BuildingandFloor))
+  confusionMatrix(rPartpreds_1318,as.factor(testing13_18rp$BuildingandFloor))
+}  
+
+{
+#using C.50
+  #User123456 <- filter(trainingData, USERID == 1|USERID == 2|USERID == 3|USERID == 4|USERID == 5|USERID == 6)
+  #names(User123456)
+  #User123456$BuildingandFloor <- paste(User123456$BUILDINGID,"-", User123456$FLOOR)
+  #names(User123456)
+  #User123456$BUILDINGID <- NULL
+  #User123456$FLOOR <- NULL
+  #User123456$TIMESTAMP <- NULL
+  #User123456$RELATIVEPOSITION <- NULL
+  #User123456$LONGITUDE <- NULL
+  #User123456$LATITUDE <- NULL
+  #User123456$PHONEID <- NULL
+  #names(User123456)  
+  library(C50)
+  inTraining1_6C50 <- createDataPartition(User123456$USERID,p=.70, list = FALSE)
+  training1_6C50 <- User123456[inTraining1_6C50,]
+  testing1_6C50 <-  User123456[-inTraining1_6C50,]  
+  C50Control_123456 <- trainControl(method = "repeatedcv", number = 10, repeats = 1)
+  C50Fituser123456 <- train(BuildingandFloor~., data = training1_6C50, method = "C5.0",trControl=C50Control_123456, tuneLength = 1)
+  c50preds_123456 <- predict(C50Fituser123456,testing1_6C50)
+  postResample(c50preds_123456,as.factor(testing1_6C50$BuildingandFloor))
+  confusionMatrix(c50preds_123456,as.factor(testing1_6C50$BuildingandFloor))
+  
+}
+
+{
+User7_12 <- filter(trainingData, USERID == 7|USERID == 8|USERID == 9|USERID == 10|USERID == 11|USERID == 12)
+names(User7_12)
+User7_12$BuildingandFloor <- paste(User7_12$BUILDINGID,"-", User7_12$FLOOR)
+names(User7_12)
+User7_12$BUILDINGID <- NULL
+User7_12$FLOOR <- NULL
+User7_12$TIMESTAMP <- NULL
+User7_12$RELATIVEPOSITION <- NULL
+User7_12$LONGITUDE <- NULL
+User7_12$LATITUDE <- NULL
+User7_12$PHONEID <- NULL
+names(User7_12)  
+library(C50)
+inTraining7_12C50 <- createDataPartition(User7_12$USERID,p=.70, list = FALSE)
+training7_12C50 <- User7_12[inTraining7_12C50,]
+testing7_12C50 <-  User7_12[-inTraining7_12C50,]  
+C50Control_712 <- trainControl(method = "repeatedcv", number = 10, repeats = 1)
+C50Fituser712 <- train(BuildingandFloor~., data = training7_12C50, method = "C5.0",trControl=C50Control_712, tuneLength = 1)
+c50preds_712 <- predict(C50Fituser712,testing7_12C50)
+postResample(c50preds_712,as.factor(testing7_12C50$BuildingandFloor))
+confusionMatrix(c50preds_123456,as.factor(testing1_6C50$BuildingandFloor))
+  
+}
+
+{
+#User 13 - 18
+inTraining13_18C50 <- createDataPartition(User13_18$USERID,p=.70, list = FALSE)
+training13_18C50 <- User13_18[inTraining13_18C50,]
+testing13_18c50 <-  User13_18[-inTraining13_18C50,]  
+C50Control_1318 <- trainControl(method = "repeatedcv", number = 10, repeats = 1)
+C50Fituser_1318 <- train(BuildingandFloor~., data = training13_18C50, method = "C5.0",trControl=C50Control_1318, tuneLength = 1)
+C50preds_1318 <- predict(C50Fituser_1318,testing13_18c50)
+postResample(C50preds_1318,as.factor(testing13_18c50$BuildingandFloor))
+confusionMatrix(rPartpreds_1318,as.factor(testing13_18rp$BuildingandFloor))
+}
+
+names(validationData)
+originalValidationData <- validationData
+
+{
+User1_6v2 <- filter(trainingData,USERID == 1|USERID == 2|USERID == 3|USERID == 4|USERID == 5|USERID == 6)
+names(User1_6v2)
+User1_6v2$BuildingandFloor <- paste(User1_6v2$BUILDINGID,"-", User1_6v2$FLOOR)
+names(User1_6v2)
+User1_6v2$BUILDINGID <- NULL
+User1_6v2$FLOOR <- NULL
+User1_6v2$TIMESTAMP <- NULL
+User1_6v2$PHONEID <- NULL
+names(User1_6v2)  
+library(rpart)
+inTraining1_6V2 <- createDataPartition(User1_6v2$USERID,p=.70, list = FALSE)
+training1_6V2 <- User1_6v2[inTraining1_6V2,]
+testing1_6v2 <-  User1_6v2[-inTraining1_6V2,]
+knnControl_1_6v2 <- trainControl(method = "repeatedcv", number = 10, repeats = 1)
+knnFituser1_6V2 <- train(BuildingandFloor~., data = training1_6V2, method = "knn",trControl=knnControl_1_6v2, tuneLength = 1)
+knnpreds_1_6v2 <- predict(knnFituser1_6V2,testing1_6v2)
+postResample(knnpreds_1_6v2,as.factor(testing1_6v2$BuildingandFloor))
+confusionMatrix(knnpreds_1_6v2,as.factor(testing1_6v2$BuildingandFloor))
+}
+
+{
+#FINAL VERSION FOR ALL User ID 2 3 7 11 16 a mix of all buildins and floors
+  UsersFINAL <- filter(trainingData,USERID == 1|USERID == 2|USERID == 5|USERID == 6|USERID == 7|USERID == 8|USERID == 9|USERID == 10|USERID == 11|USERID == 14)
+  names(UsersFINAL)
+  UsersFINAL$BuildFloor <- paste(UsersFINAL$BUILDINGID,"-", UsersFINAL$FLOOR)
+  UsersFINAL$Space_Relative <- paste(UsersFINAL$SPACEID,"-", UsersFINAL$RELATIVEPOSITION)
+  
+  names(UsersFINAL)
+  
+  UsersFINAL$BUILDINGID <- NULL
+  UsersFINAL$FLOOR <- NULL
+  UsersFINAL$TIMESTAMP <- NULL
+  UsersFINAL$PHONEID <- NULL
+  #UsersFINAL$LATITUDE <- NULL
+  #UsersFINAL$LONGITUDE <- NULL
+  UsersFINAL$RELATIVEPOSITION <- NULL
+  UsersFINAL$SPACEID <- NULL
+  names(UsersFINAL)  
+  inTrainingFINAL <- createDataPartition(UsersFINAL$USERID ,p=.70, list = FALSE)
+  trainingsFINAL <- UsersFINAL[inTrainingFINAL,]
+  testingsFINAL <-  UsersFINAL[-inTrainingFINAL,]
+  knnControl_sFINAL <- trainControl(method = "repeatedcv", number = 10, repeats = 1)
+  knnFitusersFINAL <- train(USERID ~., data = trainingsFINAL, method = "knn",trControl=knnControl_sFINAL, tuneLength = 1)
+  knnpreds_sFINAL <- predict(knnFitusersFINAL, testingsFINAL)
+  postResample(knnpreds_sFINAL, as.factor(testingsFINAL))
+  confusionMatrix(knnpreds_sFINAL,as.factor(testingsFINAL$Relative_Space))
+  str(UsersFINAL$LatLong)
+  
+  }
+
+
+validationData1 <- validationDataV2
+names(UsersFINAL)
+names(validationData1)
+validationData1$BuildingandFloor <- paste(validationData$BUILDINGID,"-", validationData$FLOOR)
+validationData1$BUILDINGID <- NULL
+validationData1$FLOOR <- NULL
+validationData1$TIMESTAMP <- NULL
+validationData1$PHONEID <- NULL
+#validationData1$LATITUDE <- NULL
+#validationData1$LONGITUDE <- NULL
+names(validationData1)
+validationData1$SPACEID <- as.factor(validationData1$SPACEID)
+UsersFINAL$SPACEID <- as.factor(UsersFINAL$SPACEID)
+
+ValidationPreds <- predict(knnFitusersFINAL, validationData1$SPACEID)
+
+write.table(ValidationPreds,file = "ValidationPreds.xls", sep = " ' " )
+
